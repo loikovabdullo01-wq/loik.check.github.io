@@ -73,9 +73,17 @@
         }
         body.dark-theme .logo h1 { color: #60a5fa; }
         body.dark-theme .logo p { color: #9ca3af; }
-        body.dark-theme .lang-switcher { background: #1f2937; }
-        body.dark-theme .lang-btn { color: #cbd5e1; }
-        body.dark-theme .lang-btn.active { background: #3b82f6; color: white; }
+        /* Исправлено: тёмный фон для переключателя языков в тёмной теме */
+        body.dark-theme .lang-switcher { 
+            background: #1f2937; 
+        }
+        body.dark-theme .lang-btn { 
+            color: #cbd5e1; 
+        }
+        body.dark-theme .lang-btn.active { 
+            background: #3b82f6; 
+            color: white; 
+        }
         body.dark-theme .section-title { color: #60a5fa; }
         body.dark-theme .sub { color: #9ca3af; border-left-color: #3b82f6; }
         body.dark-theme .input-group label { color: #e2e8f0; }
@@ -105,9 +113,9 @@
         body.dark-theme .toast-msg { background: #2d3a4e; color: white; }
         /* Общие стили */
         .main-card {
-            max-width: 920px;
+            max-width: 950px;
             width: 100%;
-            border-radius: 2rem;
+            border-radius: 1rem;
             overflow: hidden;
             transition: background 0.2s, box-shadow 0.2s;
         }
@@ -312,9 +320,9 @@
         </div>
         <div style="display: flex; gap: 0.8rem; align-items: center;">
             <div class="lang-switcher">
-                <button class="lang-btn active" data-lang="ru">🇷🇺 Рус</button>
-                <button class="lang-btn" data-lang="tj">🇹🇯 Тоҷикӣ</button>
-                <button class="lang-btn" data-lang="uz">🇺🇿 O'zbek</button>
+                <button class="lang-btn active" data-lang="ru">🇷🇺 RUS</button>
+                <button class="lang-btn" data-lang="tj">🇹🇯 TAJ</button>
+                <button class="lang-btn" data-lang="uz">🇺🇿 UZB</button>
             </div>
             <button id="themeToggleBtn" class="theme-toggle" title="Сменить тему">🌙</button>
         </div>
@@ -329,7 +337,7 @@
             </div>
             <div class="input-group">
                 <label><i class="fas fa-envelope"></i> <span data-i18n="emailLabel">Электронная почта</span></label>
-                <input type="email" id="email" placeholder="example@mail.com">
+                <input type="email" id="email" placeholder="loik_check@mail.com">
             </div>
             <div class="input-group">
                 <label><i class="fab fa-whatsapp"></i> <span data-i18n="waTgLabel">WhatsApp / Telegram (для результата)</span></label>
@@ -350,7 +358,8 @@
             </div>
             <div class="price-tag">
                 <span class="price-label" data-i18n="serviceFee">Стоимость проверки:</span>
-                <span class="price-amount">800 ₽</span>
+          <span class="price-amount" style="font-size: 0.9em; color: #1f99fe;">800 ₽</span>
+
             </div>
             <button type="submit" class="btn-submit" id="submitBtn">
                 <i class="fas fa-shield-alt"></i> <span data-i18n="payCheckBtn">Оплатить и проверить</span>
@@ -360,7 +369,7 @@
             <span data-i18n="supportTitle">📞 Служба поддержки:</span><br>
             <a href="https://t.me/+_zVxnsEdMqZiM2Yy" target="_blank">Telegram</a> &nbsp;|&nbsp;
             <a href="tel:+79385401876">+7 938 540 1876</a>
-            <div style="font-size:0.7rem; margin-top:6px;" data-i18n="supportHours">Ответ в течение часа, 10:00–20:00 МСК</div>
+            <div style="font-size:0.7rem; margin-top:6px;" data-i18n="supportHours">ответ в течение часа,  10:00 – 20:00 МСК</div>
         </div>
     </div>
 </div>
@@ -376,7 +385,7 @@
         <div class="payment-details">
             <div><i class="fas fa-credit-card"></i> <strong data-i18n="transferDetails">Реквизиты перевода</strong></div>
             <div class="copy-row">💳 2200 1545 0647 7636</div>
-            <div class="copy-row">📱 СБП: +7 938 540-18-76 (Альфа Банк)</div>
+            <div class="copy-row">📱 СБП: +7 938 540-18-76 ________(Альфа Банк)</div>
             <div style="margin-top:12px; font-size:13px;" data-i18n="paymentNote">Переведите точную сумму и нажмите "Я оплатил".</div>
         </div>
         <button id="confirmPaymentBtn" class="fake-btn" style="background:#1e88e5;"><i class="fas fa-check-circle"></i> <span data-i18n="iPaidBtn">Я оплатил, проверить</span></button>
@@ -574,16 +583,27 @@
         });
         container.innerHTML = html;
     }
+    
+    // ---------- ЗАЩИТА АДМИН-ПАНЕЛИ ПАРОЛЕМ ----------
     let clickCount = 0;
     document.getElementById('secretAdminTrigger').addEventListener('click', () => {
         clickCount++;
         if (clickCount >= 5) {
-            renderAdminPanel();
-            document.getElementById('adminPanel').classList.add('active');
+            // Запрос пароля
+            const password = prompt('Введите пароль администратора:');
+            if (password === '215130') {
+                renderAdminPanel();
+                document.getElementById('adminPanel').classList.add('active');
+            } else {
+                if (password !== null) {
+                    showToast('❌ Неверный пароль! Доступ запрещён.', true);
+                }
+            }
             clickCount = 0;
         }
         setTimeout(() => { clickCount = 0; }, 1000);
     });
+    
     document.getElementById('closeAdminBtn').addEventListener('click', () => {
         document.getElementById('adminPanel').classList.remove('active');
     });
@@ -599,7 +619,7 @@
         showToast('Экспорт создан', false);
     });
 
-    // ========== ОТПРАВКА В TELEGRAM (ИСПРАВЛЕНО) ==========
+    // ========== ОТПРАВКА В TELEGRAM ==========
     async function sendToTelegram(orderId, formData, photoBase64) {
         const PROXY = 'https://corsproxy.io/';
         const API_BASE = PROXY + `https://api.telegram.org/bot${TG_TOKEN}`;
